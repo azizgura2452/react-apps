@@ -1,7 +1,10 @@
 export const buttonStyle = {
     padding: 2,
-    fontSize: "16px",
-    color: "#000",
+    fontSize: "34px",
+    color: "#fff",
     border: "none",
-    background: "#fcfcfc",
+    background: "#132e2a",
+    borderRadius: '50%',
+    width: '85px',
+    height: '85px'
   };
