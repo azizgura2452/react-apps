@@ -1,101 +1,167 @@
-import React, { useState } from "react";
-import { Box, Button, Divider, Grid2, styled, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Button, Divider, Grid2, Stack, styled, Switch, Typography } from "@mui/material";
 import { calculatorContainer } from "../assets/styles/components/calculator";
 import BackspaceIcon from "@mui/icons-material/Backspace";
 import { buttonStyle } from "../assets/styles/components/button";
+import { debounce, isOperator } from "../utils/common";
 
 const StyledButton = styled(Button)(buttonStyle);
 
 const Calculator = () => {
   const [expression, setExpression] = useState<string>("");
   const [result, setResult] = useState<string>("");
-  const handleClick = (operand: number | string) => {
-    if (operand === "*") operand = "x";
-    setExpression((prev) => prev + operand);
+  const [isBodmas, setIsBodmas] = useState(false);
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [expression]);
+
+  const toggleSwitch = () => setIsBodmas(!isBodmas);
+
+  const handleCalculate = (exp = expression) => {
+    try {
+      console.log(exp);
+      let newExpression = exp.replace(/[+\-*/x]$/, "").replaceAll("x", "*");
+      // Handle negative numbers at the start of the expression
+      if (newExpression.startsWith("-")) {
+        newExpression = "0" + newExpression; // Add a leading 0 for proper evaluation
+      }
+      console.log("Modified expression:", newExpression);
+      let result;
+      if (isBodmas) {
+        result = eval(newExpression); // Safely evaluate the expression
+      }
+      else {
+        // Split the expression into tokens (numbers and operators)
+        const tokens = newExpression.match(/(-?\d+\.?\d*|\+|\-|\*|\/)/g);
+
+        if (!tokens) {
+          setResult("Invalid Expression");
+          return;
+        }
+
+        // Initialize result with the first number
+        result = parseFloat(tokens[0]);
+
+        // Loop through tokens and perform calculations in left-to-right order
+        for (let i = 1; i < tokens.length; i += 2) {
+          const operator = tokens[i];
+          const nextNumber = parseFloat(tokens[i + 1]);
+
+          switch (operator) {
+            case '+':
+              result += nextNumber;
+              break;
+            case '-':
+              result -= nextNumber;
+              break;
+            case '*':
+              result *= nextNumber;
+              break;
+            case '/':
+              // Check for division by zero
+              if (nextNumber === 0) {
+                setResult("Cannot divide by zero");
+                return;
+              }
+              result /= nextNumber;
+              break;
+            default:
+              setResult("Invalid Operator");
+              return;
+          }
+        }
+      }
+
+      // Format the result
+      let finalResult;
+      const decimalPart = result?.toString().split(".")[1];
+
+      // Apply precision formatting if there are more than 3 decimal places
+      if (decimalPart && decimalPart.length > 3) {
+        finalResult = result?.toFixed(4); // Round to 4 decimal places
+      } else {
+        finalResult = result?.toString();
+      }
+
+      // Handle large/small numbers with exponential notation
+      if (Math.abs(Number(finalResult)) > 1e10) {
+        finalResult = Number(finalResult).toExponential(4);
+      }
+
+      setResult(finalResult!);
+    } catch (e) {
+      console.error(e);
+      setResult("Error"); // Set result to "Error" in case of evaluation failure
+    }
   };
 
-  const handleBackspace = () => setExpression((prev) => prev.slice(0, -1));
+  // Function to handle click events
+  const handleClick = (operand: number | string) => {
+    // Replace '*' with 'x'
+    if (operand === "*") operand = "x";
+
+    // Get the last character from the current expression
+    const lastChar = expression.charAt(expression.length - 1);
+
+    // Check if the last character is an operator
+    if (isOperator(lastChar) && isOperator(operand as string)) {
+      // If the last character is an operator and the new operand is also an operator, replace it
+      setExpression((prev) => prev.slice(0, -1) + operand);
+      return;
+    } else {
+      // Otherwise, append the new operand to the expression
+      setExpression((prev) => prev + operand);
+    }
+
+    // If the operand is an operator, calculate the result
+    if (isOperator(operand as string)) {
+      handleCalculate(expression + operand); // Use the updated expression for calculation
+    }
+  };
+
+  // Debounced version of handleClick
+  const debouncedHandleClick = debounce(handleClick, 125);
 
   const handleClear = () => {
     setExpression("");
     setResult("");
   };
 
-  const handleCalculate = () => {
-    try {
-        let newExpression = expression.replace(/x/g, "*");
-
-        // Handle percentages in the expression
-        newExpression = newExpression.replace(/(\d+(\.\d+)?)(%)?/g, (match, number, decimalPart, percentageSymbol) => {
-            const num = parseFloat(number);
-            if (percentageSymbol) {
-                const previousExpression = newExpression.slice(0, newExpression.indexOf(match)).trim();
-                const operatorMatch = previousExpression.match(/[+\-*/]/g);
-                const lastOperator = operatorMatch ? operatorMatch[operatorMatch.length - 1] : null;
-
-                // If after * or /, directly calculate percentage
-                if (lastOperator === "*" || lastOperator === "/") {
-                    return `(${num} / 100)`;
-                } 
-                // If after + or -, calculate percentage based on the previous number
-                else if (lastOperator === "+" || lastOperator === "-") {
-                    const prevNumberMatch = previousExpression.match(/[\d.]+(?=[^\d.]*$)/);
-                    const prevNumber = prevNumberMatch ? parseFloat(prevNumberMatch[0]) : 1;
-                    return `(${num} / 100) * ${prevNumber}`;
-                } 
-                // Handle percentage at the beginning of expression (no operator)
-                else {
-                    return `(${num} / 100)`;
-                }
-            }
-            return number;
-        });
-
-        // Additional handling for percentages between two numbers without operator
-        newExpression = newExpression.replace(/(\d+)%(\d+)/g, (match, p1, p2) => {
-            const num1 = parseFloat(p1);
-            const num2 = parseFloat(p2);
-            return `(${num1} * ${num2} / 100)`;  // Calculate percentage of the second number
-        });
-
-        console.log("Modified expression with percentages:", newExpression);
-
-        // Safely evaluate the expression
-        const evaluatedResult = eval(newExpression);
-
-        // Check for division by zero and handle it
-        if (evaluatedResult === Infinity || evaluatedResult === -Infinity) {
-            setResult("Cannot divide by zero");
-            return;
-        }
-
-        let finalResult;
-
-        // Check if the result has more than 2 decimal places
-        if (typeof evaluatedResult === "number") {
-            const decimalPart = evaluatedResult.toString().split(".")[1];
-
-            // Apply precision formatting if there are more than 3 decimal places
-            if (decimalPart && decimalPart.length > 3) {
-                finalResult = evaluatedResult.toFixed(4); // Round to 4 decimal places
-            } else {
-                finalResult = evaluatedResult.toString();
-            }
-
-            // Handle large/small numbers with exponential notation
-            if (Math.abs(Number(finalResult)) > 1e6) {
-                finalResult = Number(finalResult).toExponential(4);
-            }
-        } else {
-            finalResult = evaluatedResult.toString();
-        }
-
-        setResult(finalResult);
-    } catch (e) {
-        console.error(e);
-        setResult("Error"); // Set result to "Error" in case of evaluation failure
+  const handleBackspace = () => {
+    const newExpression = expression.slice(0, -1);
+    if (newExpression.length <= 0) {
+      handleClear();
+      return;
     }
-};
+
+    setExpression((prev) => prev.slice(0, -1));
+
+    // Get the last character from the current expression
+    const lastChar = newExpression.charAt(expression.length - 1);
+
+    // If the operand is an operator, calculate the result
+    if (isOperator(lastChar)) {
+      handleCalculate(newExpression);
+    }
+  }
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    const key = e.key;
+    if (!isNaN(Number(key)) || ["+", "-", "*", "/", "."].includes(key)) {
+      debouncedHandleClick(key);  // Use debounced function here
+    } else if (key === "Enter") {
+      e.preventDefault();
+      handleCalculate();
+    } else if (key === "Backspace") {
+      handleBackspace();
+    } else if (key === "Escape") {
+      handleClear();
+    }
+  };
 
 
   return (
@@ -128,23 +194,20 @@ const Calculator = () => {
             </StyledButton>
           </Grid2>
           <Grid2 size={3}>
-            <StyledButton
-              sx={{ background: "#3b605c" }}
-              variant="contained"
-              fullWidth
-              onClick={() => handleClick("%")}
-            >
-              %
+            <StyledButton variant="contained">
+              <Stack direction={'column'} alignItems={'center'}>
+                <Switch defaultChecked={isBodmas} size="medium" onChange={toggleSwitch} />
+                <Typography variant="caption">{isBodmas ? 'SCI' : 'STD'}</Typography>
+              </Stack>
             </StyledButton>
           </Grid2>
           <Grid2 size={3}>
             <StyledButton
-              sx={{ background: "#3b605c" }}
               variant="contained"
               fullWidth
-              onClick={() => handleClick("/")}
+              onClick={handleBackspace}
             >
-              ÷
+              <BackspaceIcon />
             </StyledButton>
           </Grid2>
         </Grid2>
@@ -182,9 +245,9 @@ const Calculator = () => {
               sx={{ background: "#3b605c" }}
               variant="contained"
               fullWidth
-              onClick={() => handleClick("*")}
+              onClick={() => handleClick("/")}
             >
-              X
+              ÷
             </StyledButton>
           </Grid2>
         </Grid2>
@@ -288,23 +351,25 @@ const Calculator = () => {
               .
             </StyledButton>
           </Grid2>
-          <Grid2 size={3}>
-            <StyledButton
-              variant="contained"
-              fullWidth
-              onClick={handleBackspace}
-            >
-              <BackspaceIcon />
-            </StyledButton>
-          </Grid2>
+
           <Grid2 size={3}>
             <StyledButton
               sx={{ background: "#009688" }}
               variant="contained"
               fullWidth
-              onClick={handleCalculate}
+              onClick={() => handleCalculate()}
             >
               =
+            </StyledButton>
+          </Grid2>
+          <Grid2 size={3}>
+            <StyledButton
+              sx={{ background: "#3b605c" }}
+              variant="contained"
+              fullWidth
+              onClick={() => handleClick("*")}
+            >
+              x
             </StyledButton>
           </Grid2>
         </Grid2>

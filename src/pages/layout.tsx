@@ -5,7 +5,7 @@ import { Typography } from "@mui/material";
 const Layout = () => {
   return (
     <React.Fragment>
-      <Typography variant="h4" align={"center"}>
+      <Typography variant="h3" align={"center"} color="#fff">
         React Bayzat - Calculator
       </Typography>
       <Calculator />
