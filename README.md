@@ -13,6 +13,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 1. Ability to toggle between standard (std left to right evaluation) and scientific (BODMAS evaluation) calculator
 2. Ability to use keyboard
 3. Ability to observe complete expression
+4. E2E testing with Cypress
 
 ## Edge Cases (Managed)
 
