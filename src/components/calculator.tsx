@@ -206,6 +206,7 @@ const Calculator = () => {
               variant="contained"
               fullWidth
               onClick={handleBackspace}
+              data-testid="Backspace"
             >
               <BackspaceIcon />
             </StyledButton>
