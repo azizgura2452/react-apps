@@ -30,7 +30,7 @@
   "scripts": {
     "start": "webpack serve --mode development --open",
     "build": "webpack --mode production",
-    "test": "react-scripts test",
+    "test": "npx cypress open",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
