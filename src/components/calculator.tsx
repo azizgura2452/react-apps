@@ -36,7 +36,7 @@ const Calculator = () => {
       }
       else {
         // Split the expression into tokens (numbers and operators)
-        const tokens = newExpression.match(/(-?\d+\.?\d*|\+|\-|\*|\/)/g);
+        const tokens = newExpression.match(/(\d+\.?\d*|\+|\-|\*|\/)/g);
 
         if (!tokens) {
           setResult("Invalid Expression");

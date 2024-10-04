@@ -1,7 +1,7 @@
 body {
   margin: 0;
   font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  height: 100vh;
+  height: 100%;
   background: radial-gradient(circle at top left, rgba(0, 255, 255, 0.3), transparent 60%),
               radial-gradient(circle at top right, rgba(0, 255, 150, 0.3), transparent 70%),
               radial-gradient(circle at bottom left, rgba(255, 0, 255, 0.3), transparent 80%),
@@ -9,6 +9,8 @@ body {
               radial-gradient(circle at center, rgba(150, 0, 255, 0.3), transparent 90%);
   background-color: #001028; /* Dark sky color for the base */
   background-blend-mode: screen;
+  background-attachment: fixed;
+  padding-bottom: 16px;
 }
 
 .scrollable::-webkit-scrollbar {
