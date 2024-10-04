@@ -34,4 +34,4 @@ Please visit [https://react-bayzat.vercel.app](https://react-bayzat.vercel.app/)
 
 ## Future scope
 
-1. Todo: Handle expression in SCI calculator starting with negative integer
+1. Adding percentage calculation capabilities
