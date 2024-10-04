@@ -13,6 +13,9 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 To run E2E tests in Cypress environment:
 ### `npm run test`
 
+## Deployment
+Please visit [https://react-bayzat.vercel.app/](url) to see the deployed app
+
 ## Feature
 
 1. Ability to toggle between standard (std left to right evaluation) and scientific (BODMAS evaluation) calculator
