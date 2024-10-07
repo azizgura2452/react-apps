@@ -5,6 +5,7 @@ module.exports = {
   output: {
     filename: "bundle.js", // Output bundle file name
     path: path.resolve(__dirname, "dist"), // Output directory
+    publicPath: '/'
   },
   module: {
     rules: [
@@ -36,7 +37,8 @@ module.exports = {
       directory: path.join(__dirname, "./"),
     },
     port: 3000, // Port for the development server
-    open: true, // Open the default web browser when the server starts
+    open: true, // Open the default web browser when the server starts,
+    historyApiFallback: true
   },
   plugins: [
     new HtmlWebpackPlugin({
