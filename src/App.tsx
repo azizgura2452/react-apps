@@ -1,16 +1,22 @@
 import React from 'react';
 import Layout from './pages/layout';
-import {BrowserRouter, Route, Routes} from "react-router-dom"
+import { BrowserRouter, Route, Routes } from "react-router-dom"
 import Calculator from './components/calculator';
 import Playground from './pages/playground';
+import Timer from './components/timer';
+import Header from './components/common/header';
+import Datepicker from './components/datepicker';
 
 function App() {
   return (
     <BrowserRouter>
+      <Header />
       <Routes>
-        <Route path='/' element={<Layout />}>
-          <Route index path='/' element={<Calculator />}/>
-          <Route path='/playground' element={<Playground />} />
+        <Route index path='/' element={<Layout />} />
+        <Route path='/' element={<Playground />}>
+          <Route path='/calculator' element={<Calculator />} />
+          <Route path='/timer' element={<Timer />} />
+          <Route path='/datepicker' element={<Datepicker />} />
         </Route>
       </Routes>
     </BrowserRouter>

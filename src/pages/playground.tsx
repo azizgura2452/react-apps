@@ -1,15 +1,16 @@
-import React, { useEffect } from "react";
-import useGetQuery from "../hooks/useGetQuery";
+import { Box, Breadcrumbs, Container, Link, Paper, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Outlet } from "react-router-dom";
 
 const Playground = () => {
-  const { data, isLoading } = useGetQuery({
-    url: "https://jsonplaceholder.typicode.com/users",
-  });
+  return (
+    <Container maxWidth="lg">
+      <Paper sx={{margin: 2, padding: 1}} elevation={2}>
+        <Outlet />
+      </Paper>
+    </Container>
+  )
 
-  {
-    return !isLoading && data.map((user) => 
-    <li>{user.name}</li>);
-  }
 };
 
 export default Playground;

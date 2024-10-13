@@ -119,6 +119,11 @@ const Calculator = () => {
 
     // If the operand is an operator, calculate the result
     if (isOperator(operand as string)) {
+      const firstChar = expression.substring(0);
+      console.log(expression.length)
+      if(expression.length === 0 && !Number.isInteger(firstChar)) {
+        return;
+      }
       handleCalculate(expression + operand); // Use the updated expression for calculation
     }
   };

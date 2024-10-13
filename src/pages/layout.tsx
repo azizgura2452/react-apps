@@ -1,21 +1,63 @@
 import React from "react";
 import Calculator from "../components/calculator";
-import { Stack, Typography } from "@mui/material";
-import { Link, Outlet } from "react-router-dom";
+import { Box, Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Container, Grid2, Link, Paper, Stack, Typography } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
+import CalculateIcon from '@mui/icons-material/Calculate';
+import TimelapseIcon from '@mui/icons-material/Timelapse';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+
+
+const apps = [
+  {
+    id: 1,
+    name: 'Calculator',
+    icon: <CalculateIcon fontSize="large" />,
+    description: 'Calculator app with ability to switch between standard and scientific mode',
+    route: 'calculator'
+  },
+  {
+    id: 2,
+    name: 'Stopwatch Timer',
+    icon: <TimelapseIcon fontSize="large" />,
+    description: 'Stopwatch timer app',
+    route: 'timer'
+  },
+  {
+    id: 3,
+    name: 'Datepicker Utility',
+    icon: <CalendarMonthIcon fontSize="large" />,
+    description: 'Datepicker with ability to select only weekdays and filter out weekends',
+    route: 'datepicker'
+  }
+]
 
 const Layout = () => {
   return (
-    <React.Fragment>
-      <Typography variant="h3" align={"center"} color="#fff">
-        React Apps - Aziz
-      </Typography>
-      <Stack direction={'column'}>
-        <Link to={'/'}>Home</Link>
-        <Link to={'/playground'}>Playground</Link>
-      </Stack>
-      
-      <Outlet />
-    </React.Fragment>
+    <Container maxWidth="lg">
+      <Paper sx={{ margin: 2, padding: 3, backgroundColor: '#fff' }} elevation={1}>
+        <Grid2 container spacing={2}>
+          {
+            apps.map(a => {
+              return <Grid2 size={4}>
+                <Card sx={{ maxWidth: 345, height: '200px', padding: 1 }}>
+                  <CardContent sx={{height: '65%'}}>
+                    {a.icon}
+                      <Typography gutterBottom variant="h5" component="div">
+                        {a.name}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                        {a.description}
+                      </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Link component={RouterLink} to={`/${a.route}`}>Go to App</Link>
+                  </CardActions>
+                </Card></Grid2>
+            })
+          }
+        </Grid2>
+      </Paper>
+    </Container>
   );
 };
 
