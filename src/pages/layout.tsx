@@ -38,7 +38,7 @@ const Layout = () => {
         <Grid2 container spacing={2}>
           {
             apps.map(a => {
-              return <Grid2 size={4}>
+              return <Grid2 size={4} key={a.id}>
                 <Card sx={{ maxWidth: 345, height: '200px', padding: 1 }}>
                   <CardContent sx={{height: '65%'}}>
                     {a.icon}
