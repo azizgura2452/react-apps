@@ -6,6 +6,7 @@ import Playground from './pages/playground';
 import Timer from './components/timer';
 import Header from './components/common/header';
 import Datepicker from './components/datepicker';
+import Datavisualization from './components/datavisualization';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path='/calculator' element={<Calculator />} />
           <Route path='/timer' element={<Timer />} />
           <Route path='/datepicker' element={<Datepicker />} />
+          <Route path='/data-visualization' element={<Datavisualization />} />
         </Route>
       </Routes>
     </BrowserRouter>

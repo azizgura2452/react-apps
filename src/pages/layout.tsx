@@ -28,6 +28,13 @@ const apps = [
     icon: <CalendarMonthIcon fontSize="large" />,
     description: 'Datepicker with ability to select only weekdays and filter out weekends',
     route: 'datepicker'
+  },
+  {
+    id: 4,
+    name: 'D3.Js Visualization',
+    icon: <CalendarMonthIcon fontSize="large" />,
+    description: 'Interactive D3.Js visualization charts',
+    route: 'data-visualization'
   }
 ]
 
