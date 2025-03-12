@@ -5,7 +5,7 @@ import { Link as RouterLink } from "react-router-dom";
 import CalculateIcon from '@mui/icons-material/Calculate';
 import TimelapseIcon from '@mui/icons-material/Timelapse';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-
+import BarChartIcon from '@mui/icons-material/BarChart';
 
 const apps = [
   {
@@ -32,7 +32,7 @@ const apps = [
   {
     id: 4,
     name: 'D3.Js Visualization',
-    icon: <CalendarMonthIcon fontSize="large" />,
+    icon: <BarChartIcon fontSize="large" />,
     description: 'Interactive D3.Js visualization charts',
     route: 'data-visualization'
   }
